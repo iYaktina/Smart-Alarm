@@ -4,7 +4,7 @@ class Database {
     private $connection;
 
     private function __construct() {
-        $this->connection = new mysqli('localhost', 'root', '', 'SWEMVC');
+        $this->connection = new mysqli('localhost', 'root', '', 'smartalarm');
         if ($this->connection->connect_error) {
             die("Database connection failed: " . $this->connection->connect_error);
         }
