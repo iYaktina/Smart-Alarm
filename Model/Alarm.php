@@ -28,4 +28,9 @@ class Alarm {
         }
         return $alarms;
     }
+        public function delete(int $userId, int $alarmId): bool {
+        $stmt = $this->conn->prepare("DELETE FROM alarms WHERE id = ? AND user_id = ?");
+        $stmt->bind_param("ii", $alarmId, $userId);
+        return $stmt->execute();
+    }
 }

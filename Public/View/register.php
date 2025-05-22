@@ -1,15 +1,22 @@
+<?php
+require_once '../View/partials/navbar.php';
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <title>Register</title>
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="../css/style.css">
 </head>
 <body>
-<?php include_once __DIR__ . '/partials/navbar.php'; ?>
 <div class="container">
   <h1>Create Account</h1>
-  <form method="POST" action="index.php?action=register">
+
+  <?php if (!empty($_SESSION['error'])): ?>
+    <div class="message error"><?= $_SESSION['error']; unset($_SESSION['error']); ?></div>
+  <?php endif; ?>
+
+  <form method="POST" action="register.php">
     <label>Name:</label>
     <input type="text" name="name" required>
 
@@ -24,3 +31,11 @@
 </div>
 </body>
 </html>
+
+<?php
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    require_once '../../Controller/UserController.php';
+    $controller = new UserController();
+    $controller->register(); 
+}
+?>

@@ -1,7 +1,7 @@
 <?php
-require_once '../Include/auth.php'; // requires login
+require_once '../../Include/auth.php'; // requires login
 require_once '../View/partials/navbar.php';
-require_once '../Commands/SetAlarmCommand.php';
+require_once '../../Commands/SetAlarmCommands.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $time = $_POST['alarm_time'];
@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
   <meta charset="UTF-8">
   <title>Set Alarm</title>
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="../css/style.css">
 </head>
 <body>
 <div class="container">

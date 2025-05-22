@@ -1,7 +1,7 @@
 <?php
-require_once '../Include/auth.php'; // requires login
+require_once '../../Include/auth.php'; // requires login
 require_once '../View/partials/navbar.php';
-require_once '../Model/Alarm.php';
+require_once '../../Model/Alarm.php';
 
 $alarmModel = new Alarm();
 $alarms = $alarmModel->getByUser($_SESSION['user_id']);
@@ -11,7 +11,7 @@ $alarms = $alarmModel->getByUser($_SESSION['user_id']);
 <head>
   <meta charset="UTF-8">
   <title>Your Dashboard</title>
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="../css/style.css">
 </head>
 <body>
 <div class="container">
@@ -26,12 +26,16 @@ $alarms = $alarmModel->getByUser($_SESSION['user_id']);
   <?php else: ?>
     <ul class="alarm-list">
       <?php foreach ($alarms as $alarm): ?>
-        <li>
+      <li>
           ⏰ <?= htmlspecialchars($alarm['alarm_time']) ?> -
           <?= htmlspecialchars($alarm['alarm_type']) ?> Alarm
           <br>
           Tone: <?= $alarm['tone'] ?>, Volume: <?= $alarm['volume'] ?>
-        </li>
+          <form method="POST" action="delete-alarm.php" style="display:inline;">
+            <input type="hidden" name="alarm_id" value="<?= $alarm['id'] ?>">
+            <button type="submit" class="btn danger" onclick="return confirm('Delete this alarm?')">Delete</button>
+          </form>
+      </li>
       <?php endforeach; ?>
     </ul>
     <a href="set-alarm.php" class="btn">+ Add Another</a>

@@ -8,12 +8,12 @@ $isAdmin = isset($_SESSION['is_admin']) && $_SESSION['is_admin'];
     <a href="index.php" class="nav-logo">SmartAlarm</a>
     <ul class="nav-menu">
       <?php if ($isLoggedIn): ?>
-        <li><a href="index.php">Dashboard</a></li>
-        <li><a href="index.php?action=showForm">New Alarm</a></li>
-        <li><a href="index.php?action=logout">Logout</a></li>
+        <li><a href="dashboard.php">Dashboard</a></li>
+        <li><a href="set-alarm.php">New Alarm</a></li>
         <?php if ($isAdmin): ?>
-          <li><a href="index.php?action=admin">Admin Panel</a></li>
+          <li><a href="admin.php">Admin Panel</a></li>
         <?php endif; ?>
+        <li><a href="logout.php">Logout</a></li>
       <?php else: ?>
         <li><a href="login.php">Login</a></li>
         <li><a href="register.php">Register</a></li>

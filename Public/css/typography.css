@@ -1,0 +1,12 @@
+h1, h2 {
+  color: #2c3e50;
+}
+
+a {
+  color: #3b7ddd;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}

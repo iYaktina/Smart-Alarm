@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <title>SmartAlarm | Home</title>
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="../css/style.css">
 </head>
 <body>
   <?php include_once '../View/partials/navbar.php'; ?>

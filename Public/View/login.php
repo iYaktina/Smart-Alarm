@@ -1,15 +1,24 @@
+<?php
+require_once '../View/partials/navbar.php';
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <title>Login</title>
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="../css/style.css">
 </head>
 <body>
-<?php include_once __DIR__ . '/partials/navbar.php'; ?>
 <div class="container">
   <h1>Login</h1>
-  <form method="POST" action="index.php?action=login">
+
+  <?php if (!empty($_SESSION['error'])): ?>
+    <div class="message error"><?= $_SESSION['error']; unset($_SESSION['error']); ?></div>
+  <?php elseif (!empty($_SESSION['message'])): ?>
+    <div class="message success"><?= $_SESSION['message']; unset($_SESSION['message']); ?></div>
+  <?php endif; ?>
+
+  <form method="POST" action="login.php">
     <label>Email:</label>
     <input type="email" name="email" required>
 
@@ -21,3 +30,12 @@
 </div>
 </body>
 </html>
+
+<?php
+// At the bottom: process form submission
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    require_once '../../Controller/UserController.php';
+    $controller = new UserController();
+    $controller->login(); // handles validation and session
+}
+?>
