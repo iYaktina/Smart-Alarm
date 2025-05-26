@@ -1,11 +1,12 @@
 <?php
-require_once '../../Include/auth.php'; // requires login
+require_once '../../Include/auth.php';
 require_once '../View/partials/navbar.php';
 require_once '../../Model/Alarm.php';
 
 $alarmModel = new Alarm();
 $alarms = $alarmModel->getByUser($_SESSION['user_id']);
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -18,7 +19,7 @@ $alarms = $alarmModel->getByUser($_SESSION['user_id']);
   <h1>Your Alarms</h1>
 
   <?php if (!empty($_SESSION['message'])): ?>
-    <div class="message"><?= $_SESSION['message']; unset($_SESSION['message']); ?></div>
+    <div class="message"><?= htmlspecialchars($_SESSION['message']); unset($_SESSION['message']); ?></div>
   <?php endif; ?>
 
   <?php if (empty($alarms)): ?>
@@ -26,19 +27,27 @@ $alarms = $alarmModel->getByUser($_SESSION['user_id']);
   <?php else: ?>
     <ul class="alarm-list">
       <?php foreach ($alarms as $alarm): ?>
-      <li>
-          ⏰ <?= htmlspecialchars($alarm['alarm_time']) ?> -
-          <?= htmlspecialchars($alarm['alarm_type']) ?> Alarm
+        <li class="alarm-card">
+          ⏰ <strong><?= htmlspecialchars($alarm['alarm_time']) ?></strong> 
+          | <?= htmlspecialchars(ucfirst($alarm['alarm_type'])) ?> Alarm
           <br>
-          Tone: <?= $alarm['tone'] ?>, Volume: <?= $alarm['volume'] ?>
-          <form method="POST" action="delete-alarm.php" style="display:inline;">
+          🔊 Tone: <?= htmlspecialchars($alarm['tone']) ?> | Volume: <?= htmlspecialchars($alarm['volume']) ?>
+          <br>
+          <?php if ($alarm['use_traffic']): ?>
+            <span class="tag traffic">🚗 Traffic Enabled</span>
+          <?php endif; ?>
+          <?php if ($alarm['use_weather']): ?>
+            <span class="tag weather">🌤️ Weather Adjusted</span>
+          <?php endif; ?>
+
+          <form method="POST" action="delete-alarm.php" onsubmit="return confirm('Delete this alarm?');" style="margin-top: 10px;">
             <input type="hidden" name="alarm_id" value="<?= $alarm['id'] ?>">
-            <button type="submit" class="btn danger" onclick="return confirm('Delete this alarm?')">Delete</button>
+            <button type="submit" class="btn danger">Delete</button>
           </form>
-      </li>
+        </li>
       <?php endforeach; ?>
     </ul>
-    <a href="set-alarm.php" class="btn">+ Add Another</a>
+    <a href="set-alarm.php" class="btn">+ Add Another Alarm</a>
   <?php endif; ?>
 </div>
 </body>

@@ -24,6 +24,7 @@ class UserController {
 
             $user = $this->userModel->login($email, $password);
             if ($user) {
+                $_SESSION['is_admin']=$user['is_admin'];
                 $_SESSION['user_id'] = $user['id'];
                 header('Location: index.php');
             } else {

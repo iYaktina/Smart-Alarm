@@ -1,35 +1,32 @@
 <?php
-require_once __DIR__ . '/Observer/Subject.php';
-require_once __DIR__ . '/Observer/Observer.php';
-require_once __DIR__ . '/Observer/AlarmManager.php';
+require_once __DIR__ . '/../Include/config.php';
 
-class WeatherService implements Subject {
-    private array $observers = [];
-    private array $weatherData = [];
+class WeatherService {
+    private string $city;
 
-    public function attach(Observer $observer): void {
-        $this->observers[] = $observer;
+    public function __construct(string $city = 'Cairo') {
+        $this->city = $city;
     }
 
-    public function detach(Observer $observer): void {
-        $this->observers = array_filter($this->observers, fn($obs) => $obs !== $observer);
-    }
+    public function getWeatherData(): ?array {
+        $apiKey = WEATHER_API_KEY;
+        $url = "https://api.openweathermap.org/data/2.5/weather?q=" . urlencode($this->city) . "&appid=" . $apiKey;
 
-    public function notify(): void {
-        foreach ($this->observers as $observer) {
-            $observer->update($this->weatherData);
-        }
-    }
+        $response = file_get_contents($url);
 
-    public function fetchWeather(string $city): array {
-        // Placeholder (normally you'd use CURL to call OpenWeatherMap API)
-        $this->weatherData = [
-            'city' => $city,
-            'temperature' => 22,
-            'condition' => 'Sunny'
+        if (!$response) return null;
+
+        $data = json_decode($response, true);
+
+        if (!isset($data['main']['temp'])) return null;
+
+        $tempCelsius = round($data['main']['temp'] - 273.15, 1);
+        $condition = $data['weather'][0]['main'] ?? 'Unknown';
+
+        return [
+            'temperature_c' => $tempCelsius,
+            'condition' => $condition,
         ];
-
-        $this->notify(); // notify all observers
-        return $this->weatherData;
     }
 }
+?>

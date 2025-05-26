@@ -34,4 +34,29 @@ class User {
         $stmt->execute();
         return $stmt->get_result()->fetch_assoc();
     }
+
+       public function getAll(): array {
+        $result = $this->conn->query("SELECT id, name, email, is_admin FROM users");
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
+
+    public function update(int $id, string $name, string $email, bool $isAdmin): bool {
+        $stmt = $this->conn->prepare("UPDATE users SET name = ?, email = ?, is_admin = ? WHERE id = ?");
+        $stmt->bind_param("ssii", $name, $email, $isAdmin, $id);
+        return $stmt->execute();
+    }
+
+    public function delete(int $id): bool {
+        $stmt = $this->conn->prepare("DELETE FROM users WHERE id = ?");
+        $stmt->bind_param("i", $id);
+        return $stmt->execute();
+    }
+
+    public function create(string $name, string $email, string $password, bool $isAdmin = false): bool {
+        $hash = password_hash($password, PASSWORD_DEFAULT);
+        $stmt = $this->conn->prepare("INSERT INTO users (name, email, password, is_admin) VALUES (?, ?, ?, ?)");
+        $stmt->bind_param("sssi", $name, $email, $hash, $isAdmin);
+        return $stmt->execute();
+    }
+
 }

@@ -34,6 +34,35 @@ class Alarm {
         );
         return $stmt->execute();
     }
+     public function getByUser(int $userId): array {
+        $stmt = $this->conn->prepare("SELECT * FROM alarms WHERE user_id = ?");
+        $stmt->bind_param("i", $userId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        $alarms = [];
+        while ($row = $result->fetch_assoc()) {
+            $alarms[] = $row;
+        }
+        return $alarms;
+    }
+
+    public function updateAlarmTime(int $alarmId, string $newTime): bool {
+    $stmt = $this->conn->prepare("UPDATE alarms SET alarm_time = ? WHERE id = ?");
+    $stmt->bind_param("si", $newTime, $alarmId);
+    return $stmt->execute();
+}
+
+public function getLastInsertedId(): int {
+    return $this->conn->insert_id;
+}
+
+public function delete(int $userId, int $alarmId): bool {
+    $stmt = $this->conn->prepare("DELETE FROM alarms WHERE id = ? AND user_id = ?");
+    $stmt->bind_param("ii", $alarmId, $userId);
+    return $stmt->execute();
+}
+
 
 }
 ?>

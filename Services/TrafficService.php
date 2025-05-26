@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/Observer/Subject.php';
-require_once __DIR__ . '/../Include/config.php'; // Contains TRAFFIC_API_KEY and TRAFFIC_API_URL
+require_once __DIR__ . '/../Include/config.php'; 
 
 class TrafficService implements Subject {
     private array $observers = [];
@@ -20,7 +20,7 @@ class TrafficService implements Subject {
         }
     }
 
-    public function fetchTraffic(string $origin, string $destination): array {
+    public function fetchTraffic(string $origin, string $destination, string $alarmTime, int $alarmId): array {
         $url = TRAFFIC_API_URL . "?origins=" . urlencode($origin) .
                "&destinations=" . urlencode($destination) .
                "&departure_time=now&traffic_model=best_guess&key=" . TRAFFIC_API_KEY;
@@ -35,22 +35,28 @@ class TrafficService implements Subject {
 
         $data = json_decode($response, true);
 
-        // Extract delay in seconds (if available)
         $duration = $data['rows'][0]['elements'][0]['duration']['value'] ?? 0;
         $durationInTraffic = $data['rows'][0]['elements'][0]['duration_in_traffic']['value'] ?? 0;
 
-        $delay = $durationInTraffic - $duration;
+        $delaySeconds = $durationInTraffic - $duration;
+        $actualDelay = max(0, round($delaySeconds / 60));
+
+        
+        $finalDelay = $actualDelay >= 10 ? $actualDelay : 10;
 
         $this->trafficData = [
+            'alarm_id' => $alarmId,
+            'alarm_time' => $alarmTime,
             'origin' => $origin,
             'destination' => $destination,
             'normal_time_min' => round($duration / 60),
             'traffic_time_min' => round($durationInTraffic / 60),
-            'delay_minutes' => round($delay / 60),
-            'status' => $delay > 0 ? 'Delayed' : 'Normal'
+            'delay_minutes' => $finalDelay,
+            'status' => $actualDelay > 0 ? 'Delayed' : 'Normal'
         ];
 
         $this->notify();
         return $this->trafficData;
     }
 }
+?>

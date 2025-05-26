@@ -10,3 +10,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['alarm_id'])) {
 
 header('Location: dashboard.php');
 exit;
+?>

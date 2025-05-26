@@ -1,23 +1,65 @@
- /* Simple modal styles */
-    .modal {
-      display: none;
-      position: fixed; top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      background: white; padding: 20px;
-      border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-      z-index: 1000;
-      width: 300px;
-    }
-    .modal.active {
-      display: block;
-    }
-    .modal-header {
-      font-weight: bold;
-      margin-bottom: 10px;
-    }
-    .modal-close {
-      float: right;
-      cursor: pointer;
-      color: red;
-      font-weight: bold;
-    }
+.modal {
+  display: none;
+  position: fixed; 
+  top: 50%; 
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #fff;
+  padding: 25px 30px;
+  border-radius: 12px;
+  border: 3px solid #000;         
+  box-shadow: 0 0 20px rgba(0,0,0,0); 
+  z-index: 1000;
+  width: 320px;
+  font-family: 'Segoe UI', sans-serif;
+  color: #111;
+}
+
+.modal.active {
+  display: block;
+}
+
+.modal-header {
+  font-weight: 700;
+  font-size: 1.3em;
+  margin-bottom: 15px;
+  border-bottom: 2px solid #000;
+  padding-bottom: 8px;
+  color: #111;
+}
+
+.modal-close {
+  float: right;
+  font-size: 1.5em;
+  font-weight: 700;
+  color: #000;
+  cursor: pointer;
+  user-select: none;
+}
+
+.modal-close:hover {
+  color: #444;
+}
+
+#map-modal {
+  display: none;
+  position: fixed; top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 600px;
+  z-index: 1000;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+#map-modal.active {
+  display: block;
+}
+
+#map {
+  height: 400px;
+  width: 100%;
+  border-radius: 8px;
+}

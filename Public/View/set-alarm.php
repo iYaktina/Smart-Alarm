@@ -1,9 +1,11 @@
 <?php
 require_once '../../Include/auth.php';
+require_once '../../Include/config.php';
 require_once '../View/partials/navbar.php';
 require_once '../../Commands/SetAlarmCommands.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
     $time = $_POST['alarm_time'];
     $type = $_POST['alarm_type'] ?? 'basic';
     $tone = $_POST['tone'] ?? 'default';
@@ -14,10 +16,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $trafficEnd = $_POST['traffic_end'] ?? '';
 
     $useWeather = isset($_POST['use_weather']) ? true : false;
-    $tempMin = $_POST['temp_min'] ?? null;
-    $tempMax = $_POST['temp_max'] ?? null;
+    $tempMin = isset($_POST['temp_min']) && $_POST['temp_min'] !== '' ? (float)$_POST['temp_min'] : null;
+    $tempMax = isset($_POST['temp_max']) && $_POST['temp_max'] !== '' ? (float)$_POST['temp_max'] : null;
 
-    // Pass these new params to SetAlarmCommand (adjust class accordingly)
     $command = new SetAlarmCommand(
         $_SESSION['user_id'], $time, $type, $tone, $volume,
         $useTraffic, $trafficStart, $trafficEnd,
@@ -31,6 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     header('Location: dashboard.php');
     exit;
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -39,9 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <meta charset="UTF-8" />
   <title>Set Alarm</title>
   <link rel="stylesheet" href="../css/style.css" />
-  <style>
-
-  </style>
+  <script src="https://maps.googleapis.com/maps/api/js?key=<?php echo TRAFFIC_API_KEY; ?>&libraries=places" async defer></script>
 </head>
 <body>
 <div class="container">
@@ -73,29 +73,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <label for="volume">Volume (0–10):</label>
     <input type="number" name="volume" min="0" max="10" value="5" />
-
+    <input type="hidden" name="traffic_start" id="traffic_start">
+    <input type="hidden" name="traffic_end" id="traffic_end">
+    <input type="hidden" name="temp_min" id="temp_min">
+    <input type="hidden" name="temp_max" id="temp_max">
     <button type="submit">Save Alarm</button>
   </form>
 </div>
-
-<!-- Traffic Modal -->
+    
 <div class="modal" id="traffic-modal">
   <div class="modal-header">
     Traffic Locations
     <span class="modal-close" id="close-traffic">&times;</span>
   </div>
   <form id="traffic-form">
-    <label for="traffic_start">Start Location:</label>
-    <input type="text" id="traffic_start" name="traffic_start" placeholder="Enter start location" />
+    <label>Start Location:</label>
+    <label>
+      <input type="radio" name="start_location_option" value="use_device" id="use-device-location" />
+      Use My Location
+    </label>
+    <label>
+      <input type="radio" name="start_location_option" value="choose_on_map" id="choose-on-map" />
+      Choose on Map
+    </label>
 
-    <button type="button" id="use-device-location">Use My Location</button>
+    <label>End Location:</label>
+    <button type="button" id="choose-end-location">
+      <i class="fas fa-map-marker-alt"></i> Choose on Map
+    </button>
 
-    <label for="traffic_end">End Location:</label>
-    <input type="text" id="traffic_end" name="traffic_end" placeholder="Enter end location" />
+    <input type="hidden" id="traffic_start_modal" name="traffic_start_modal" />
+    <input type="hidden" id="traffic_end_modal" name="traffic_end_modal" />
+        <button type="button" id="confirm-traffic" class="btn">Confirm</button>
   </form>
 </div>
 
-<!-- Weather Modal -->
+
 <div class="modal" id="weather-modal">
   <div class="modal-header">
     Weather Settings
@@ -103,13 +116,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   </div>
   <form id="weather-form">
     <label for="temp_min">Wake Earlier If Temp Below (°C):</label>
-    <input type="number" id="temp_min" name="temp_min" step="0.1" />
+    <input type="number" id="temp_min_modal" name="temp_min_modal" step="0.1" />
 
     <label for="temp_max">Wake Earlier If Temp Above (°C):</label>
-    <input type="number" id="temp_max" name="temp_max" step="0.1" />
+    <input type="number" id="temp_max_modal" name="temp_max_modal" step="0.1" />
+
+
+       <button type="button" id="confirm-weather" class="btn">Confirm</button>
   </form>
 </div>
 
+<div class="modal" id="map-modal">
+  <div class="modal-header">
+    Choose Location
+    <span class="modal-close" id="close-map">&times;</span>
+  </div>
+  <div id="map" style="width: 100%; height: 400px;"></div>
+  <button type="button" id="confirm-location" style="margin-top: 10px;">Confirm Location</button>
+</div>
 <script src="../js/alarm-modal.js"></script>
 </body>
 </html>

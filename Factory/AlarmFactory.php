@@ -1,21 +1,18 @@
 <?php
-require_once __DIR__ . '/../Model/Alarm.php';
+require_once __DIR__ . '/../Services/Decorators/BaseAlarm.php';
+require_once __DIR__ . '/../Services/Decorators/GradualWakeup.php';
 
 class AlarmFactory {
-    public static function create(string $type): Alarm {
+    public static function create(string $type = 'basic'): \Services\Decorators\AlarmInterface {
+        $base = new \Services\Decorators\BaseAlarm();
+
         switch (strtolower($type)) {
             case 'smart':
-                require_once __DIR__ . '/../Services/Decorators/WeatherAwareAlarm.php';
-                require_once __DIR__ . '/../Services/Decorators/GradualWakeUp.php';
-
-                $alarm = new Alarm();
-                $decorated = new WeatherAwareAlarm($alarm);
-                $decorated = new GradualWakeUp($decorated);
-                return $decorated;
+                return new \Services\Decorators\GradualWakeup($base);
 
             case 'basic':
             default:
-                return new Alarm();  // Core alarm model
+                return $base;
         }
     }
 }
