@@ -2,12 +2,10 @@
 require_once '../Services/TrafficService.php';
 require_once '../Services/Observer/AlarmManager.php';
 
-// Create service + attach a dummy observer
 $service = new TrafficService();
-$observer = new AlarmManager(); // This will log updates or act on them
+$observer = new AlarmManager(); 
 $service->attach($observer);
 
-// Use real city names or landmarks
 $origin = 'Cairo University';
 $destination = 'Tahrir Square';
 

@@ -32,10 +32,9 @@ require_once '../View/partials/navbar.php';
 </html>
 
 <?php
-// At the bottom: process form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     require_once '../../Controller/UserController.php';
     $controller = new UserController();
-    $controller->login(); // handles validation and session
+    $controller->login(); 
 }
 ?>
