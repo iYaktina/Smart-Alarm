@@ -39,10 +39,14 @@ class TrafficService implements Subject {
         $durationInTraffic = $data['rows'][0]['elements'][0]['duration_in_traffic']['value'] ?? 0;
 
         $delaySeconds = $durationInTraffic - $duration;
-        $actualDelay = max(0, round($delaySeconds / 60));
+        $actualDelay =  round($delaySeconds / 60);
 
         
-        $finalDelay = $actualDelay >= 10 ? $actualDelay : 10;
+        if ($actualDelay < 0) {
+         $finalDelay = 0; 
+        } else {
+            $finalDelay = ($actualDelay >= 10) ? $actualDelay : 10;
+        }
 
         $this->trafficData = [
             'alarm_id' => $alarmId,

@@ -8,14 +8,6 @@ class UserController {
         $this->userModel = new User();
     }
 
-    public function loginForm() {
-        require_once __DIR__ . '/../View/login.php';
-    }
-
-    public function registerForm() {
-        require_once __DIR__ . '/../View/register.php';
-    }
-
     public function login() {
         session_start();
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {

@@ -63,6 +63,38 @@ public function delete(int $userId, int $alarmId): bool {
     return $stmt->execute();
 }
 
+public function getById(int $id): ?array {
+    $stmt = $this->conn->prepare("SELECT * FROM alarms WHERE id = ?");
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    return $result->fetch_assoc() ?: null;
+}
+public function getUserIdByAlarmId(int $alarmId): ?int {
+    $stmt = $this->conn->prepare("SELECT user_id FROM alarms WHERE id = ?");
+    $stmt->bind_param("i", $alarmId);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $row = $result->fetch_assoc();
+
+    if ($row) {
+        return (int)$row['user_id'];
+    }
+
+    return null; 
+}
+
+public function getNextAlarmForUser(int $userId): ?array {
+    $stmt = $this->conn->prepare(
+        "SELECT * FROM alarms WHERE user_id = ? AND alarm_time > NOW() ORDER BY alarm_time ASC LIMIT 1"
+    );
+    $stmt->bind_param("i", $userId);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $alarm = $result->fetch_assoc();
+
+    return $alarm ?: null;
+}
 
 }
 ?>

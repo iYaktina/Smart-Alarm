@@ -5,7 +5,17 @@ require_once '../../Model/Alarm.php';
 
 $alarmModel = new Alarm();
 $alarms = $alarmModel->getByUser($_SESSION['user_id']);
+
+$nextAlarm = $alarmModel->getNextAlarmForUser($_SESSION['user_id']); 
+$alarmTimeStr = $nextAlarm ? $nextAlarm['alarm_time'] : null;
+$alarmTone = $nextAlarm ? $nextAlarm['tone'] : 'default.mp3';
 ?>
+
+<script>
+  window.alarmTimeStr = <?= json_encode($alarmTimeStr); ?>;
+  window.alarmTone = <?= json_encode($alarmTone); ?>;
+</script>
+<script src="../js/dashboard.js"></script>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -49,6 +59,12 @@ $alarms = $alarmModel->getByUser($_SESSION['user_id']);
     </ul>
     <a href="set-alarm.php" class="btn">+ Add Another Alarm</a>
   <?php endif; ?>
+</div>
+
+<div id="alarm-popup" style="display:none; position:fixed; top:30%; left:50%; transform:translateX(-50%); background:white; padding:20px; border:2px solid black; z-index:1000; width:300px; text-align:center;">
+  <p>Alarm ringing!</p>
+  <button id="snooze-btn">+5 minutes</button>
+  <button id="stop-btn">Stop</button>
 </div>
 </body>
 </html>
